@@ -1,6 +1,32 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+        <!-- Banner de Instalação Inteligente -->
+    <div id="install-banner" style="display: none; background: #e3f2fd; color: #0d47a1; padding: 12px; text-align: center; font-size: 14px; border-bottom: 2px solid #bbdefb; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+        <span id="install-text">Para usar como Aplicativo: toque no botão de compartilhar e escolha <b>"Adicionar à Tela de Início"</b>.</span>
+        <button onclick="document.getElementById('install-banner').style.display='none'" style="margin-left: 10px; background: none; border: none; font-weight: bold; color: #0d47a1; cursor: pointer; float: right;">X</button>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // Verifica se JÁ ESTÁ rodando como aplicativo em tela cheia
+            const isPWA = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+            
+            if (!isPWA) {
+                const banner = document.getElementById('install-banner');
+                const text = document.getElementById('install-text');
+                banner.style.display = 'block';
+                
+                // Muda o texto dependendo se o celular é Android ou iPhone
+                if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    text.innerHTML = '📲 <b>Instale no seu iPhone:</b> Toque no botão de compartilhar <span style="font-size:16px;">⎋</span> (quadrado com seta) embaixo e selecione <b>"Adicionar à Tela de Início"</b>.';
+                } else if (/Android/i.test(navigator.userAgent)) {
+                    text.innerHTML = '📲 <b>Instale no seu Android:</b> Toque nos 3 pontinhos <span style="font-size:16px;">⋮</span> no topo direito e selecione <b>"Adicionar à tela inicial"</b> ou <b>"Instalar aplicativo"</b>.';
+                }
+            }
+        });
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
