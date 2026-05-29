@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>NZ Advanced Electrical Calculator</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; margin: 0; padding: 15px; background-color: #f4f4f9; color: #333; }
+        .container { max-width: 100%; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); box-sizing: border-box; }
+        h2 { margin-top: 0; color: #111; font-size: 20px; border-bottom: 2px solid #0056b3; padding-bottom: 8px; }
+        label { display: block; margin-top: 12px; font-weight: bold; font-size: 13px; color: #444; }
+        input, select, button { width: 100%; padding: 11px; margin-top: 4px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; -webkit-appearance: none; }
+        .grid { display: flex; gap: 10px; }
+        .grid > div { flex: 1; }
+        .radio-group { display: flex; gap: 10px; margin-top: 5px; }
+        .radio-option { flex: 1; text-align: center; }
+        .radio-option input { display: none; }
+        .radio-option label { display: block; background: #e9ecef; padding: 10px; border-radius: 8px; cursor: pointer; border: 1px solid #ccc; font-weight: bold; font-size: 14px; margin: 0; }
+        .radio-option input:checked + label { background-color: #0056b3; color: white; border-color: #0056b3; }
+        button { background-color: #0056b3; color: white; border: none; font-weight: bold; margin-top: 20px; cursor: pointer; font-size: 16px; }
+        button:active { background-color: #004085; }
+        .result { margin-top: 15px; padding: 15px; background: #e9ecef; border-left: 5px solid #0056b3; border-radius: 6px; font-size: 14px; line-height: 1.5; }
+        .alert { border-left-color: #dc3545; background: #f8d7da; color: #721c24; }
+        .warning-box { border-left-color: #ffc107; background: #fff3cd; color: #856404; }
+        .success-box { background: #d4edda; border-left-color: #28a745; color: #155724; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>NZ Electrical Calculator (AS/NZS 3000)</h2>
+    
+    <div class="grid">
+        <div>
+            <label>Sistema / Tensão:</label>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="single" name="phase" value="230" checked>
+                    <label for="single">1Ø (230V)</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="three" name="phase" value="400">
+                    <label for="three">3Ø (400V)</label>
+                </div>
+            </div>
+        </div>
+        <div>
+            <label>Limite V-Drop:</label>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="vd5" name="vdLimit" value="5" checked>
+                    <label for="vd5">5% (Mains)</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="vd7" name="vdLimit" value="7">
+                    <label for="vd7">7% (Sub)</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div>
+            <label for="load">Carga (Ampères):</label>
+            <input type="number" id="load" value="16" inputmode="numeric">
+        </div>
+        <div>
+            <label for="distance">Distância (Metros):</label>
+            <input type="number" id="distance" value="25" inputmode="numeric">
+        </div>
+    </div>
+
+    <div class="grid">
+        <div>
+            <label for="insulation">Isolamento do Cabo:</label>
+            <select id="insulation">
+                <option value="PVC">PVC (V-90 TPS - 75°C)</option>
+                <option value="XLPE">XLPE (Circular - 90°C)</option>
+            </select>
+        </div>
+        <div>
+            <label for="bunching">Circuitos Agrupados:</label>
+            <select id="bunching">
+                <option value="1">1 (Isolado)</option>
+                <option value="2">2 Circuitos (x0.80)</option>
+                <option value="3">3 Circuitos (x0.70)</option>
+                <option value="4">4+ Circuitos (x0.65)</option>
+            </select>
+        </div>
+    </div>
+
+    <label for="environment">Ambiente de Instalação:</label>
+    <select id="environment">
+        <option value="air">Unenclosed in Air (Ar Livre / Calha)</option>
+        <option value="roofNoInsulation">Roof Space SEM Isolamento (Teto Comercial Livre)</option>
+        <option value="roofWithInsulation">Roof Space COM Isolamento (Totalmente Coberto - Derating 0.7)</option>
+        <option value="buried">Direct Buried (Subterrâneo Direto na Terra)</option>
+        <option value="conduit">In Underground Conduit (Subterrâneo em Duto)</option>
+    </select>
+
+    <div class="grid">
+        <div>
+            <label for="cable">Cabo Escolhido (TPS/Cu):</label>
+            <select id="cable">
+                <option value="1.5">1.5 mm²</option>
+                <option value="2.5" selected>2.5 mm²</option>
+                <option value="4">4.0 mm²</option>
+                <option value="6">6.0 mm²</option>
+                <option value="10">10.0 mm²</option>
+                <option value="16">16.0 mm²</option>
+            </select>
+        </div>
+        <div>
+            <label for="breaker">Disjuntor Escolhido (MCB):</label>
+            <select id="breaker">
+                <option value="6">6 A</option>
+                <option value="10">10 A</option>
+                <option value="16">16 A</option>
+                <option value="20" selected>20 A</option>
+                <option value="25">25 A</option>
+                <option value="32">32 A</option>
+                <option value="40">40 A</option>
+                <option value="50">50 A</option>
+                <option value="63">63 A</option>
+                <option value="80">80 A</option>
+                <option value="100">100 A</option>
+            </select>
+        </div>
+    </div>
+
+    <button onclick="calcularTudo()">Calcular Instalação</button>
+
+    <div id="output" class="result" style="display:none;"></div>
+</div>
+
+<script>
+function calcularTudo() {
+    var load = parseFloat(document.getElementById('load').value);
+    var distance = parseFloat(document.getElementById('distance').value);
+    var env = document.getElementById('environment').value;
+    var insulation = document.getElementById('insulation').value;
+    var bunchFactor = parseFloat(document.getElementById('bunching').value);
+    var sizeSelected = document.getElementById('cable').value;
+    var breakerSelected = parseFloat(document.getElementById('breaker').value);
+    
+    var phaseValue = document.querySelector('input[name="phase"]:checked').value;
+    var isThreePhase = (phaseValue === "400");
+    var V_nominal = isThreePhase ? 400 : 230;
+    
+    var maxVdPercent = parseFloat(document.querySelector('input[name="vdLimit"]:checked').value);
+
+    var cableSizes = ["1.5", "2.5", "4", "6", "10", "16"];
+    
+    var dbPVC = {
+        "1.5": { air: 16, roofNoInsulation: 16, roofWithInsulation: 16, buried: 22, conduit: 18, vc1: 30.3, vc3: 26.2 },
+        "2.5": { air: 22, roofNoInsulation: 22, roofWithInsulation: 22, buried: 30, conduit: 24, vc1: 18.2, vc3: 15.7 },
+        "4":   { air: 30, roofNoInsulation: 30, roofWithInsulation: 30, buried: 39, conduit: 32, vc1: 11.4, vc3: 9.86 },
+        "6":   { air: 38, roofNoInsulation: 38, roofWithInsulation: 38, buried: 49, conduit: 40, vc1: 7.57, vc3: 6.55 },
+        "10":  { air: 53, roofNoInsulation: 53, roofWithInsulation: 53, buried: 66, conduit: 54, vc1: 4.48, vc3: 3.88 },
+        "16":  { air: 71, roofNoInsulation: 71, roofWithInsulation: 71, buried: 87, conduit: 71, vc1: 2.82, vc3: 2.44 }
+    };
+
+    var dbXLPE = {
+        "1.5": { air: 21, roofNoInsulation: 21, roofWithInsulation: 21, buried: 26, conduit: 21, vc1: 31.8, vc3: 27.5 },
+        "2.5": { air: 29, roofNoInsulation: 29, roofWithInsulation: 29, buried: 35, conduit: 28, vc1: 19.1, vc3: 16.5 },
+        "4":   { air: 39, roofNoInsulation: 39, roofWithInsulation: 39, buried: 46, conduit: 37, vc1: 11.9, vc3: 10.3 },
+        "6":   { air: 49, roofNoInsulation: 49, roofWithInsulation: 49, buried: 57, conduit: 46, vc1: 7.95, vc3: 6.89 },
+        "10":  { air: 68, roofNoInsulation: 68, roofWithInsulation: 68, buried: 77, conduit: 62, vc1: 4.70, vc3: 4.07 },
+        "16":  { air: 91, roofNoInsulation: 91, roofWithInsulation: 91, buried: 101, conduit: 81, vc1: 2.96, vc3: 2.57 }
+    };
+
+    var db = (insulation === "XLPE") ? dbXLPE : dbPVC;
+
+    var fBunch = 1.0;
+    if (bunchFactor === 2) fBunch = 0.80;
+    if (bunchFactor === 3) fBunch = 0.70;
+    if (bunchFactor === 4) fBunch = 0.65;
+
+    var fEnv = 1.0;
+    if (env === "roofWithInsulation") fEnv = 0.7;
+
+    var breakers = [6, 10, 16, 20, 25, 32, 40, 50, 63, 80, 100];
+    var autoBreaker = 100;
+    for (var i = 0; i < breakers.length; i++) {
+        if (breakers[i] >= load) {
+            autoBreaker = breakers[i];
+            break;
+        }
+    }
+
+    var maxZsTable = { 6: 7.67, 10: 4.60, 16: 2.88, 20: 2.30, 25: 1.84, 32: 1.44, 40: 1.15, 50: 0.92, 63: 0.73, 80: 0.58, 100: 0.46 };
+
+    var currentCapacitySelected = db[sizeSelected][env] * fEnv * fBunch;
+    var vcSelected = isThreePhase ? db[sizeSelected].vc3 : db[sizeSelected].vc1;
+    var vDropSelected = (vcSelected * load * distance) / 1000;
+    var pDropSelected = (vDropSelected / V_nominal) * 100;
+    var zsSelected = (vcSelected * distance * 2) / 1000;
+
+    var sizeSugerido = "Nenhuma";
+    for (var j = 0; j < cableSizes.length; j++) {
+        var s = cableSizes[j];
+        var cap = db[s][env] * fEnv * fBunch;
+        if (cap >= autoBreaker) {
+            var vcS = isThreePhase ? db[s].vc3 : db[s].vc1;
+            var pDS = ((vcS * load * distance) / 1000 / V_nominal) * 100;
+            if (pDS <= maxVdPercent) {
+                sizeSugerido = s + " mm²";
+                break;
+            }
+        }
+    }
+
+    var outputDiv = document.getElementById('output');
+    outputDiv.style.display = "block";
+
+    var breakerTooSmall = (breakerSelected < load);
+    var cableTooWeakForBreaker = (currentCapacitySelected < breakerSelected);
+    var hasVDropError = (pDropSelected > maxVdPercent);
+    var hasZsWarning = (zsSelected > maxZsTable[breakerSelected]);
+
+    var html = "<strong>Análise da Instalação Escolhida:</strong><br><br>";
+    html += "• Cabo: <strong>" + sizeSelected + " mm²</strong> | MCB: <strong>" + breakerSelected + "A</strong><br>";
+    html += "• Capacidade Real do Cabo no Ambiente: <strong>" + currentCapacitySelected.toFixed(1) + "A</strong><br>";
+    html += "• Queda de Tensão: <strong>" + vDropSelected.toFixed(2) + "V (" + pDropSelected.toFixed(2) + "%)</strong><br>";
+    html += "• Impedância do Loop ($Z_s$): <strong>" + zsSelected.toFixed(2) + " Ω</strong> [Máx: " + maxZsTable[breakerSelected] + " Ω]<br>";
+    html += "• <strong>Sugestão Ideal da Norma: Cabo " + sizeSugerido + " + MCB " + autoBreaker + "A</strong><br><br>";
+
+    if (breakerTooSmall) {
+        outputDiv.className = "result alert";
+        html += "❌ <strong>ERRO DE CONFIGURAÇÃO (MCB):</strong> O disjuntor escolhido (" + breakerSelected + "A) é menor que a corrente da carga (" + load + "A). O disjuntor vai desarmar constantemente!";
+    } else if (cableTooWeakForBreaker) {
+        outputDiv.className = "result alert";
+        html += "❌ <strong>RISCO TÉRMICO DE INCÊNDIO:</strong> O disjuntor de " + breakerSelected + "A está muito grande para este cabo de " + sizeSelected + " mm² (que só aguenta " + currentCapacitySelected.toFixed(1) + "A aqui). <strong>Aumente o cabo para 4.0 mm² ou reduza o disjuntor para " + autoBreaker + "A!</strong>";
+    } else if (hasVDropError) {
+        outputDiv.className = "result alert";
+        html += "❌ <strong>ERRO DE VOLTAGEM:</strong> Queda de tensão de " + pDropSelected.toFixed(2) + "% estourou o limite legal. Aumente a bitola.";
+    } else if (hasZsWarning) {
+        outputDiv.className = "result warning-box";
+        html += "⚠️ <strong>AVISO DE SEGURANÇA ($Z_s$):</strong> Distância longa para o tempo de disparo rápido em curto. Considere aumentar o condutor de Terra (Earth).";
+    } else {
+        outputDiv.className = "result success-box";
+        html += "✅ <strong>Instalação Aprovada!</strong> O cabo de " + sizeSelected + " mm² está perfeitamente protegido pelo disjuntor de " + breakerSelected + "A em conformidade com as normas <strong>AS/NZS 3000 / 3008</strong>.";
+    }
+
+    outputDiv.innerHTML = html;
+}
+</script>
+
+</body>
+</html>
