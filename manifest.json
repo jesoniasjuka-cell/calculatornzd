@@ -1,0 +1,15 @@
+{
+  "name": "NZ Cable Calculator",
+  "short_name": "NZ Cable",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "B0ADE3DE-9644-441E-8E6E-85D87FBE0F62.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
